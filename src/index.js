@@ -9,7 +9,7 @@ function getQuotes() {
     )
 }
 
-// call the function
+// call the fetch function
 getQuotes()
 
 // quotes container
@@ -25,7 +25,7 @@ function displayQuotes(quote) {
         quoteCard.className = "quote-card"
         // console.log(quoteCard)
 
-        // set up the blockquote and append to the quote card (later)
+        // set up the blockquote 
         const blockQuote = document.createElement("blockquote")
         blockQuote.className = "blockquote"
         
@@ -39,15 +39,15 @@ function displayQuotes(quote) {
         footer.className = "blockquote-footer"
         footer.innerText = quote.author
 
-        // set up button and span tag and add span inside button 
+        // set up button 
         const addLikeBtn = document.createElement("button")
         addLikeBtn.className = "btn-success"
         addLikeBtn.id = quote.id
         addLikeBtn.textContent = "Likes: "
+
+        // set up span tag and add span inside button 
         const span = document.createElement("span")
         span.textContent = quote.likes.length
-        // let int = document.createTextNode("0")
-        // span.append(int)
         addLikeBtn.append(span)
 
         // add event listener to addQuoteBtn
@@ -55,16 +55,33 @@ function displayQuotes(quote) {
             newLikes(quote, span)
         })
 
-        // set up delete button
+        // set up delete button & add event listener
         const deleteBtn = document.createElement("button")
         deleteBtn.className = "btn-danger"
         deleteBtn.innerText = "Delete"
         deleteBtn.addEventListener("click", () =>{
+            // send quote and quoteCard to callback
             deleteQuote(quote, quoteCard)
+        })
+
+        
+        // set up edit button
+        const editButton = document.createElement("button")
+        editButton.className = "btn-info"
+        editButton.innerText = "Edit"
+        let editFormState = false
+        editButton.addEventListener("click", () => {
+            editFormState = !editFormState
+            if (editFormState === true) {
+                viewEditForm(quoteCard, quote)
+            }
+            else {
+                hideEditForm(quoteCard)
+            }
         })
         
         // append all inner elements to blockQuote
-        blockQuote.append(pTag, footer, addLikeBtn, deleteBtn)
+        blockQuote.append(pTag, footer, addLikeBtn, deleteBtn, editButton)
         // append blockQuote to quoteCard
         quoteCard.appendChild(blockQuote)
         // append quoteCare to quoteList
@@ -104,6 +121,8 @@ function newQuote(e){
 
 }
 
+// use quote from displayQuote function to target id
+// use quoteCard from displayQuote function to remove that particular quoteCard from quoteList
 function deleteQuote(quote, quoteCard){
     fetch(`http://localhost:3000/quotes/${quote.id}`, {
         method: 'DELETE'
@@ -111,6 +130,9 @@ function deleteQuote(quote, quoteCard){
     quoteList.removeChild(quoteCard)
 }
 
+// take in quote and span from displayQuote func
+// use quote's id for quoteId value
+// use span to change content & update by adding 1 each time func is called in event listener
 function newLikes(quote, span){
     fetch("http://localhost:3000/likes", {
         method: "POST",
@@ -125,6 +147,79 @@ function newLikes(quote, span){
         span.textContent = parseInt(span.textContent, 10) + 1;
     })
 }
+
+function viewEditForm(quoteCard, quote) {
+    const editForm = document.createElement('form')
+    const quoteDiv = document.createElement('div')
+    quoteDiv.className = 'form-group'
+    const authorDiv = document.createElement('div')
+    authorDiv.className = 'form-group'
+    
+    const quoteInput = document.createElement('input')
+    quoteInput.type = 'text'
+    quoteInput.name = 'quote'
+    quoteInput.value = quote.quote
+    quoteInput.className = 'form-control'
+    const label = document.createElement('label')
+    label.textContent = "Edit Quote:"
+    quoteDiv.append(label, quoteInput)
+
+    const authorInput = document.createElement('input')
+    authorInput.name = 'author'
+    authorInput.type = 'text'
+    authorInput.className = 'form-control'
+    authorInput.value = quote.author
+    const label2 = document.createElement('label')
+    label2.textContent = "Edit Author:"
+    authorDiv.append(label2, authorInput)
+
+    const submitBtn = document.createElement('button')
+    submitBtn.setAttribute('type', 'submit')
+    submitBtn.setAttribute('value', 'submit')
+    submitBtn.innerText = "Submit"
+
+    editForm.addEventListener('submit', (e) => {
+        submitEdit(e, quote, quoteCard, editForm)
+    })
+
+    editForm.append(quoteDiv, authorDiv, submitBtn)
+    quoteCard.append(editForm)
+    // console.log(editForm)
+}
+
+function submitEdit(e, quote, quoteCard) {
+    e.preventDefault()
+    // console.log(e.target[0].value)
+    // console.log(quoteCard.firstChild.firstChild.textContent)
+    // console.log(quoteCard.firstChild.children[1].textContent)
+
+    fetch(`http://localhost:3000/quotes/${quote.id}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'Application/json'
+        },
+        body: JSON.stringify({
+            quote: e.target[0].value,
+            author: e.target[1].value
+        })
+})
+    .then(res => res.json())
+    .then(newEdit => {
+        quoteCard.firstChild.firstChild.textContent = newEdit.quote
+        quoteCard.firstChild.children[1].textContent = newEdit.author
+        viewEditForm(quoteCard, newEdit)
+        hideEditForm(quoteCard)
+    })
+}
+
+function hideEditForm(quoteCard) {
+    console.log("I be hidden!")
+    quoteCard.removeChild(quoteCard.lastElementChild)
+}
+
+
+
 
 // couldn't get this to work but leaving it here for now, don't need it anymore
 // function displayLikes(likesArr) {

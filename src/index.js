@@ -1,14 +1,14 @@
 // create a function to fetch all the quotes, iterate through data
 //  and send it to the callback to display quotes
+
 function getQuotes() {
     return fetch("http://localhost:3000/quotes?_embed=likes")
     .then(res => res.json())
     .then(quotes => {
         sortQuotes(quotes);
-        displayQuotes(quotes)
-        // quotes.forEach(quote => {
-        // displayQuotes(quote)
-        // })
+        quotes.forEach(quote => {
+        displayQuotes(quote)
+        })
     })
 }
 
@@ -41,16 +41,21 @@ function sortQuotes(quotes){
             const sortedQuotes = copyQuotes.sort((a, b) => {
                 return a.author.toLowerCase().localeCompare(b.author.toLowerCase())
             })
+            // console.log(sortedQuotes)
+            quoteList.innerHTML = ""
+            sortedQuotes.forEach(sortedQuote => {
+                displayQuotes(sortedQuote) 
+            })
             // clear the current lis in quoteList 
             // then call the function to create the sorted quotes
-            quoteList.innerHTML = ""
-            displayQuotes(sortedQuotes) 
         }
         else {
             //clear the current lis in quoteList
             // then call the func to create the original quote lis
             quoteList.innerHTML = ""
-            displayQuotes(quotes)
+            quotes.forEach(quote =>{
+                displayQuotes(quote)
+            })
         }
     })
     // adds the btn before the quote list within the div
@@ -60,8 +65,8 @@ function sortQuotes(quotes){
 
 
 // function that displays all the quotes
-function displayQuotes(quotes) {
-    quotes.forEach(quote => {
+function displayQuotes(quote) {
+    // quotes.forEach(quote => {
 
         // create the quote card structure first
         // set up the quote card li
@@ -175,7 +180,7 @@ function displayQuotes(quotes) {
         quoteCard.append(blockQuote, editForm)
         // append quoteCare to quoteList
         quoteList.append(quoteCard)
-    })
+    // })
 }
 
 // grab the form then add event listener with a callback

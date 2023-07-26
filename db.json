@@ -2,7 +2,7 @@
   "quotes": [
     {
       "id": 1,
-      "quote": "Yay! Live frugally on surprise.",
+      "quote": "Expect nothing. Live frugally on surprise.",
       "author": "Alice Walkers",
       "likes": [
         {
@@ -219,6 +219,21 @@
       "quoteId": 5,
       "date": 1690413233902,
       "id": 27
+    },
+    {
+      "quoteId": 1,
+      "date": 1690482426041,
+      "id": 28
+    },
+    {
+      "quoteId": 1,
+      "date": 1690482426720,
+      "id": 29
+    },
+    {
+      "quoteId": 1,
+      "date": 1690482427529,
+      "id": 30
     }
   ]
 }

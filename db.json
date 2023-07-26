@@ -2,8 +2,30 @@
   "quotes": [
     {
       "id": 1,
-      "quote": "Expect nothing. Live frugally on surprise.",
-      "author": "Alice Walker"
+      "quote": "Yay! Live frugally on surprise.",
+      "author": "Alice Walkers",
+      "likes": [
+        {
+          "id": 1,
+          "quoteId": 1,
+          "createdAt": 1558524356
+        },
+        {
+          "quoteId": 1,
+          "date": 1690412182227,
+          "id": 22
+        },
+        {
+          "quoteId": 1,
+          "date": 1690412182427,
+          "id": 23
+        },
+        {
+          "quoteId": 1,
+          "date": 1690412182650,
+          "id": 24
+        }
+      ]
     },
     {
       "id": 2,
@@ -54,6 +76,12 @@
       "id": 11,
       "quote": "The here and now is all we have, and if we play it right it's all we'll need.",
       "author": "Ann Richards"
+    },
+    {
+      "quote": "Is this the real life? Or is this just fantasy?",
+      "author": "Queen",
+      "likes": [],
+      "id": 12
     }
   ],
   "likes": [
@@ -141,6 +169,56 @@
       "quoteId": 2,
       "date": 1690252961240,
       "id": 17
+    },
+    {
+      "quoteId": 5,
+      "date": 1690412175616,
+      "id": 18
+    },
+    {
+      "quoteId": 5,
+      "date": 1690412176711,
+      "id": 19
+    },
+    {
+      "quoteId": 5,
+      "date": 1690412177009,
+      "id": 20
+    },
+    {
+      "quoteId": 5,
+      "date": 1690412177828,
+      "id": 21
+    },
+    {
+      "quoteId": 1,
+      "date": 1690412182227,
+      "id": 22
+    },
+    {
+      "quoteId": 1,
+      "date": 1690412182427,
+      "id": 23
+    },
+    {
+      "quoteId": 1,
+      "date": 1690412182650,
+      "id": 24
+    },
+    {
+      "quoteId": 5,
+      "date": 1690413233421,
+      "id": 25
+    },
+    {
+      "quoteId": 5,
+      "date": 1690413233686,
+      "id": 26
+    },
+    {
+      "quoteId": 5,
+      "date": 1690413233902,
+      "id": 27
     }
   ]
 }

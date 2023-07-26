@@ -3,10 +3,13 @@
 function getQuotes() {
     return fetch("http://localhost:3000/quotes?_embed=likes")
     .then(res => res.json())
-    .then(quotes => quotes.forEach(quote => {
-        displayQuotes(quote)
+    .then(quotes => {
+        sortQuotes(quotes);
+        displayQuotes(quotes)
+        // quotes.forEach(quote => {
+        // displayQuotes(quote)
+        // })
     })
-    )
 }
 
 // call the fetch function
@@ -15,9 +18,50 @@ getQuotes()
 // quotes container
 const quoteList = document.getElementById("quote-list")
 
+// function that handles sorted quotes by author
+function sortQuotes(quotes){
+    // grabs the div
+    const div = document.querySelector("body").children[1]
+
+    //create sort btn
+    const sortBtn = document.createElement('button')
+    sortBtn.textContent = "Sort by Author"
+    sortBtn.className = "btn-primary"
+
+    //set sortState for toggle 
+    let sortState = false
+
+    //add event listener on btn
+    sortBtn.addEventListener("click", () => {
+        // toggle state on click to true
+        sortState = !sortState
+        if (sortState === true) {
+            // create a copy to sort quotes
+            const copyQuotes = [...quotes]
+            const sortedQuotes = copyQuotes.sort((a, b) => {
+                return a.author.toLowerCase().localeCompare(b.author.toLowerCase())
+            })
+            // clear the current lis in quoteList 
+            // then call the function to create the sorted quotes
+            quoteList.innerHTML = ""
+            displayQuotes(sortedQuotes) 
+        }
+        else {
+            //clear the current lis in quoteList
+            // then call the func to create the original quote lis
+            quoteList.innerHTML = ""
+            displayQuotes(quotes)
+        }
+    })
+    // adds the btn before the quote list within the div
+    div.prepend(sortBtn)
+}
+
+
+
 // function that displays all the quotes
-function displayQuotes(quote) {
-        // console.log(quote)
+function displayQuotes(quotes) {
+    quotes.forEach(quote => {
 
         // create the quote card structure first
         // set up the quote card li
@@ -64,6 +108,42 @@ function displayQuotes(quote) {
             deleteQuote(quote, quoteCard)
         })
 
+        // create the form
+        const editForm = document.createElement('form')
+        editForm.style.display = 'none'
+        const quoteDiv = document.createElement('div')
+        quoteDiv.className = 'form-group'
+        const authorDiv = document.createElement('div')
+        authorDiv.className = 'form-group'
+    
+        const quoteInput = document.createElement('input')
+        quoteInput.type = 'text'
+        quoteInput.name = 'quote'
+        quoteInput.value = quote.quote
+        quoteInput.className = 'form-control'
+        const label = document.createElement('label')
+        label.textContent = "Edit Quote:"
+        quoteDiv.append(label, quoteInput)
+
+        const authorInput = document.createElement('input')
+        authorInput.name = 'author'
+        authorInput.type = 'text'
+        authorInput.className = 'form-control'
+        authorInput.value = quote.author
+        const label2 = document.createElement('label')
+        label2.textContent = "Edit Author:"
+        authorDiv.append(label2, authorInput)
+
+        const submitBtn = document.createElement('button')
+        submitBtn.setAttribute('type', 'submit')
+        submitBtn.setAttribute('value', 'submit')
+        submitBtn.innerText = "Submit"
+
+        editForm.addEventListener('submit', (e) => {
+        submitEdit(e, quote, quoteCard)
+        })
+
+        editForm.append(quoteDiv, authorDiv, submitBtn)
         
         // set up edit button
         const editButton = document.createElement("button")
@@ -73,19 +153,29 @@ function displayQuotes(quote) {
         editButton.addEventListener("click", () => {
             editFormState = !editFormState
             if (editFormState === true) {
-                viewEditForm(quoteCard, quote)
+                editForm.style.display = "block"
             }
             else {
-                hideEditForm(quoteCard)
+                editForm.style.display = "none"
             }
         })
+        // editButton.addEventListener("click", () => {
+        //     editFormState = !editFormState
+        //     if (editFormState === true) {
+        //         viewEditForm(quoteCard, quote)
+        //     }
+        //     else {
+        //         hideEditForm(quoteCard)
+        //     }
+        // })
         
         // append all inner elements to blockQuote
         blockQuote.append(pTag, footer, addLikeBtn, deleteBtn, editButton)
         // append blockQuote to quoteCard
-        quoteCard.appendChild(blockQuote)
+        quoteCard.append(blockQuote, editForm)
         // append quoteCare to quoteList
         quoteList.append(quoteCard)
+    })
 }
 
 // grab the form then add event listener with a callback
@@ -148,50 +238,47 @@ function newLikes(quote, span){
     })
 }
 
-function viewEditForm(quoteCard, quote) {
-    const editForm = document.createElement('form')
-    const quoteDiv = document.createElement('div')
-    quoteDiv.className = 'form-group'
-    const authorDiv = document.createElement('div')
-    authorDiv.className = 'form-group'
+// function viewEditForm(quoteCard, quote) {
+//     const editForm = document.createElement('form')
+//     const quoteDiv = document.createElement('div')
+//     quoteDiv.className = 'form-group'
+//     const authorDiv = document.createElement('div')
+//     authorDiv.className = 'form-group'
     
-    const quoteInput = document.createElement('input')
-    quoteInput.type = 'text'
-    quoteInput.name = 'quote'
-    quoteInput.value = quote.quote
-    quoteInput.className = 'form-control'
-    const label = document.createElement('label')
-    label.textContent = "Edit Quote:"
-    quoteDiv.append(label, quoteInput)
+//     const quoteInput = document.createElement('input')
+//     quoteInput.type = 'text'
+//     quoteInput.name = 'quote'
+//     quoteInput.value = quote.quote
+//     quoteInput.className = 'form-control'
+//     const label = document.createElement('label')
+//     label.textContent = "Edit Quote:"
+//     quoteDiv.append(label, quoteInput)
 
-    const authorInput = document.createElement('input')
-    authorInput.name = 'author'
-    authorInput.type = 'text'
-    authorInput.className = 'form-control'
-    authorInput.value = quote.author
-    const label2 = document.createElement('label')
-    label2.textContent = "Edit Author:"
-    authorDiv.append(label2, authorInput)
+//     const authorInput = document.createElement('input')
+//     authorInput.name = 'author'
+//     authorInput.type = 'text'
+//     authorInput.className = 'form-control'
+//     authorInput.value = quote.author
+//     const label2 = document.createElement('label')
+//     label2.textContent = "Edit Author:"
+//     authorDiv.append(label2, authorInput)
 
-    const submitBtn = document.createElement('button')
-    submitBtn.setAttribute('type', 'submit')
-    submitBtn.setAttribute('value', 'submit')
-    submitBtn.innerText = "Submit"
+//     const submitBtn = document.createElement('button')
+//     submitBtn.setAttribute('type', 'submit')
+//     submitBtn.setAttribute('value', 'submit')
+//     submitBtn.innerText = "Submit"
 
-    editForm.addEventListener('submit', (e) => {
-        submitEdit(e, quote, quoteCard, editForm)
-    })
+//     editForm.addEventListener('submit', (e) => {
+//         submitEdit(e, quote, quoteCard, editForm)
+//     })
 
-    editForm.append(quoteDiv, authorDiv, submitBtn)
-    quoteCard.append(editForm)
-    // console.log(editForm)
-}
+//     editForm.append(quoteDiv, authorDiv, submitBtn)
+//     quoteCard.append(editForm)
+//     // console.log(editForm)
+// }
 
 function submitEdit(e, quote, quoteCard) {
     e.preventDefault()
-    // console.log(e.target[0].value)
-    // console.log(quoteCard.firstChild.firstChild.textContent)
-    // console.log(quoteCard.firstChild.children[1].textContent)
 
     fetch(`http://localhost:3000/quotes/${quote.id}`, {
         method: 'PATCH',
@@ -201,14 +288,15 @@ function submitEdit(e, quote, quoteCard) {
         },
         body: JSON.stringify({
             quote: e.target[0].value,
-            author: e.target[1].value
+            author: e.target[1].value,
+            likes: quote.likes
         })
 })
     .then(res => res.json())
     .then(newEdit => {
         quoteCard.firstChild.firstChild.textContent = newEdit.quote
         quoteCard.firstChild.children[1].textContent = newEdit.author
-        viewEditForm(quoteCard, newEdit)
+        displayQuotes(quoteCard, newEdit)
         hideEditForm(quoteCard)
     })
 }
@@ -218,16 +306,3 @@ function hideEditForm(quoteCard) {
     quoteCard.removeChild(quoteCard.lastElementChild)
 }
 
-
-
-
-// couldn't get this to work but leaving it here for now, don't need it anymore
-// function displayLikes(likesArr) {
-//     const newLikesCounted = {}
-//     likesArr.forEach(like => {
-//         newLikesCounted[like.quoteId] = (newLikesCounted[like.quoteId] || 0) + 1
-//     })
-//     console.log(newLikesCounted)
-//     let likeCount = parseInt(e.target.lastChild.innerText) + 1
-//     console.log(likeCount)
-// }
